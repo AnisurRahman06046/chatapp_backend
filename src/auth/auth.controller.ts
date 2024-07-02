@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/user/dto/user.dto';
 import { Public } from './public.route';
@@ -35,5 +35,13 @@ export class AuthController {
       statusCode: HttpStatus.CREATED,
       data: result,
     });
+  }
+
+  // logout
+  @Public()
+  @Get('logout')
+  async logout(@Res() res: Response) {
+    const logoutResult = await this.authService.logOut(res);
+    return res.status(HttpStatus.OK).json(logoutResult);
   }
 }

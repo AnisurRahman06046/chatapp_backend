@@ -73,4 +73,15 @@ export class AuthService {
     return { access_token: token };
     // return res.status(200).json({ access_token: token });
   }
+
+  // log out
+  async logOut(res: Response) {
+    res.clearCookie('access_token');
+
+    return {
+      message: 'User logged out successfully',
+      success: true,
+      statusCode: HttpStatus.OK,
+    };
+  }
 }
