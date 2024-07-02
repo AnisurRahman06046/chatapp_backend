@@ -2,7 +2,6 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  Res,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -11,8 +10,7 @@ import { Model } from 'mongoose';
 import { User } from 'src/schemas/users.schema';
 import { CreateUserDto } from 'src/user/dto/user.dto';
 import * as bcrypt from 'bcrypt';
-import { Response } from 'express';
-import { setAuthCookie } from 'src/utils/cookie.utils';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -53,10 +51,7 @@ export class AuthService {
   }
 
   // sign in
-  async login(
-    payload: { email: string; hashedPassword: string },
-    @Res() res: Response,
-  ) {
+  async login(payload: { email: string; hashedPassword: string }) {
     const user = await this.userModel.findOne({ email: payload.email });
     const isMatch = await bcrypt.compare(
       payload.hashedPassword,
@@ -69,19 +64,8 @@ export class AuthService {
     const tokenPayload = { _id: user._id, email: user.email, role: user.role };
     const token = await this.jwtService.signAsync(tokenPayload);
 
-    setAuthCookie(res, token, process.env.NODE_DEV === 'development');
+    // setAuthCookie(res, token, process.env.NODE_DEV === 'development');
     return { access_token: token };
     // return res.status(200).json({ access_token: token });
-  }
-
-  // log out
-  async logOut(res: Response) {
-    res.clearCookie('access_token');
-
-    return {
-      message: 'User logged out successfully',
-      success: true,
-      statusCode: HttpStatus.OK,
-    };
   }
 }
