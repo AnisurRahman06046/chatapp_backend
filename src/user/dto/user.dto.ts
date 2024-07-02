@@ -5,9 +5,12 @@ import {
   IsEnum,
   IsBoolean,
   MinLength,
+  IsOptional,
+  // IsOptional,
 } from 'class-validator';
 import { Gender, UserRoles } from '../constants/users.constant';
 import { PartialType } from '@nestjs/mapped-types';
+
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
@@ -35,9 +38,11 @@ export class CreateUserDto {
   hashedPassword: string;
 
   @IsEnum(UserRoles)
-  role: UserRoles;
+  // @IsOptional()
+  role: string = 'user';
 
   @IsString()
+  @IsOptional()
   profilePic: string;
 
   @IsBoolean()
