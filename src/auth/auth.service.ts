@@ -52,7 +52,7 @@ export class AuthService {
 
   // sign in
   async login(payload: { email: string; hashedPassword: string }) {
-    const user = await this.userModel.findOne({ email: payload.email });
+    const user = await this.userModel.findOne({ email: payload.email }).lean();
     const isMatch = await bcrypt.compare(
       payload.hashedPassword,
       user.hashedPassword,
@@ -64,8 +64,9 @@ export class AuthService {
     const tokenPayload = { _id: user._id, email: user.email, role: user.role };
     const token = await this.jwtService.signAsync(tokenPayload);
 
+    delete user.hashedPassword;
     // setAuthCookie(res, token, process.env.NODE_DEV === 'development');
-    return { access_token: token };
+    return { access_token: token, user };
     // return res.status(200).json({ access_token: token });
   }
 }
