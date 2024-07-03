@@ -57,12 +57,10 @@ export class UserController {
     };
   }
 
-  @Roles(UserRoles.ADMIN)
-  @Patch('update/:id')
-  async updateUserForAdmin(
-    @Body() payload: UpdateUserDto,
-    @Param('id') id: string,
-  ) {
+  // update for user
+  @Patch('update-profile')
+  async updateProfile(@Body() payload: UpdateUserDto, @Request() req: any) {
+    const id = req.user._id;
     const result = await this.userServices.updateUser(id, payload);
     return {
       message: 'User is updated',
@@ -72,10 +70,24 @@ export class UserController {
     };
   }
 
-  // update for user
-  @Patch('update-profile')
-  async updateProfile(@Body() payload: UpdateUserDto, @Request() req: any) {
-    const id = req.user._id;
+  // users for sidebar
+  @Get('sidebar-users')
+  async sideBarUsers(@Request() req: any) {
+    const loggedInId = req.user._id;
+    const result = await this.userServices.getSideBarUser(loggedInId);
+    return {
+      success: 'true',
+      statusCode: HttpStatus.OK,
+      data: result,
+    };
+  }
+
+  @Roles(UserRoles.ADMIN)
+  @Patch('update/:id')
+  async updateUserForAdmin(
+    @Body() payload: UpdateUserDto,
+    @Param('id') id: string,
+  ) {
     const result = await this.userServices.updateUser(id, payload);
     return {
       message: 'User is updated',

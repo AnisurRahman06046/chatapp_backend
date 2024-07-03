@@ -94,4 +94,12 @@ export class UserService {
     );
     return result;
   }
+
+  // get users for sidebar
+  async getSideBarUser(id: string) {
+    const users = await this.userModel
+      .find({ _id: { $ne: id } })
+      .select('-hashedPassword');
+    return users;
+  }
 }
