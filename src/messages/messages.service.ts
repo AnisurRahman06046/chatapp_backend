@@ -34,4 +34,58 @@ export class MessagesService {
     }
     return newMessage;
   }
+
+  // async sendMessage(
+  //   senderId: mongoose.Schema.Types.ObjectId,
+  //   receiverId: mongoose.Schema.Types.ObjectId,
+  //   message: string,
+  // ) {
+  //   const session = await this.conversationSchema.startSession();
+  //   session.startTransaction();
+
+  //   try {
+  //     let conversation = await this.conversationSchema
+  //       .findOne({
+  //         participants: { $all: [senderId, receiverId] },
+  //       })
+  //       .session(session);
+
+  //     if (!conversation) {
+  //       conversation = new this.conversationSchema({
+  //         participants: [senderId, receiverId],
+  //       });
+  //       await conversation.save({ session });
+  //     }
+
+  //     const newMessage = new this.messageSchema({
+  //       senderId,
+  //       receiverId,
+  //       message,
+  //     });
+  //     await newMessage.save({ session });
+
+  //     conversation.messages.push(newMessage._id as any);
+  //     await conversation.save({ session });
+
+  //     await session.commitTransaction();
+  //     session.endSession();
+
+  //     return newMessage;
+  //   } catch (error) {
+  //     await session.abortTransaction();
+  //     session.endSession();
+  //     throw error;
+  //   }
+  // }
+
+  // get messages
+  async getMessages(senderId: any, receiverId: any) {
+    const conversation = await this.conversationSchema
+      .findOne({
+        participants: { $all: [senderId, receiverId] },
+      })
+      .populate('messages');
+    if (!conversation) return [];
+    return conversation;
+  }
 }

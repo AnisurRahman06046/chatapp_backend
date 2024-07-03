@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpStatus,
   Param,
   Post,
@@ -31,6 +32,20 @@ export class MessagesController {
       receiverId,
       data.message,
     );
+    return {
+      success: 'true',
+      statusCode: HttpStatus.OK,
+      data: result,
+    };
+  }
+
+  // get messages
+  @Roles(UserRoles.USER)
+  @Get('messages/:id')
+  async getMessages(@Param('id') id: string, @Request() req: any) {
+    const receiverId = id;
+    const senderId = req.user._id;
+    const result = await this.messageServices.getMessages(senderId, receiverId);
     return {
       success: 'true',
       statusCode: HttpStatus.OK,
